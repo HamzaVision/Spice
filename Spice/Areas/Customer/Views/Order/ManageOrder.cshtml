@@ -1,0 +1,77 @@
+﻿@model List<Spice.Models.ViewModels.OrderDetailsViewModel>
+@using Spice.Constant_Utility
+@{
+    ViewData["Title"] = "ManageOrder";
+}
+
+<h2 class="text-info">Manage Order</h2>
+<form method="post">
+    <br />
+    @if (Model.Count > 0)
+    {
+        <div class="container row bg-white border mb-3 rounded">
+            @foreach (var items in Model)
+            {
+                <div class="col-12 pb-3 pt-3">
+                    <div class="whitebackground">
+                        <div class="row">
+                            <div class="col-4">
+                                Order Number: @items.OrderHeader.Id
+                                <ul class="text-info">
+                                    @foreach (var item in items.OrderDetails)
+                                    {
+                                        <li class="text-info">@item.Name x @item.count</li>
+                                    }
+                                </ul>
+                            </div>
+                            <div class="col-4 pb-2">
+                                <div class="input-group pb-2">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">Time</span>
+                                    </div>
+                                    <input type="text" class="border rounded form-control" readonly value="@items.OrderHeader.PickUpTime" />
+                                </div>
+                                @{
+                                    var comments = items.OrderHeader.Comments;
+                                    @if (comments == null || comments.Trim().Length == 0)
+                                    {
+                                        items.OrderHeader.Comments = "No Instructions";
+                                    }
+                                }
+                                <textarea asp-for="@items.OrderHeader.Comments" readonly class="rounded border form-control" style="width:100%; height:75px;"></textarea>
+                            </div>
+                            <div class="col-3 offset-1 align-content-center">
+                                @if (items.OrderHeader.Status.Equals(SD.statusSubmitted))
+                                {
+                                    <div class="col-12">
+                                        <button type="submit" asp-area="Customer" asp-controller="Order" asp-action="OrderPrepared" asp-route-orderId="@items.OrderHeader.Id" class="btn btn-info form-control mb-3">
+                                            <i class="fas fa-check"></i>&nbsp; Start Cooking
+                                        </button>
+                                        <button type="submit" asp-area="Customer" asp-controller="Order" asp-action="CancelOrder" asp-route-orderId="@items.OrderHeader.Id"  class="btn btn-danger form-control mb-3">
+                                            <i class="fas fa-times"></i>&nbsp; Cancel Order
+                                        </button>
+                                    </div>
+                                }
+                                @if (items.OrderHeader.Status.Equals(SD.statusInProcess))
+                                {
+                                    <div class="col-12">
+                                        <button type="submit" asp-area="Customer" asp-controller="Order" asp-action="OrderReady" asp-route-orderId="@items.OrderHeader.Id" class="btn btn-success form-control mb-3">
+                                            <i class="fas fa-flag-checkered"></i>&nbsp; Order Ready
+                                        </button>
+                                        <button type="submit" asp-area="Customer" asp-controller="Order" asp-action="CancelOrder" asp-route-orderId="@items.OrderHeader.Id" class="btn btn-danger form-control mb-3">
+                                            <i class="fas fa-times"></i>&nbsp; Cancel Order
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <h5 class="text-secondary">THERE ARE NO ORDERS TO MANAGE.</h5>
+    }
+</form>

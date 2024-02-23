@@ -1,0 +1,105 @@
+﻿@model Spice.Models.ViewModels.SubCategoryAndCategoryViewModel
+@using Spice.Extensions
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+
+
+
+
+<br>
+<h2 class='text-info'>Edit Sub Category</h2>
+@if (TempData["DangerMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible" role="alert" style="max-width: 500px;">
+
+        <div style="display: inline-block; word-wrap: break-word;">
+            @TempData["DangerMessage"]
+        </div>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+<br>
+<div class="whitebackgroundBorder border">
+    <div class="row">
+        <div class="col-8 border-right">
+            <form asp-action="Edit">
+                <input type="hidden" asp-for="subCategory.CategoryId"/>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group row">
+                    <div class="col-3">
+                        <label asp-for="subCategory.CategoryId" class="col-form-label"></label>
+                    </div>
+                    <div class="col-5">
+                        <select id="ddlCategoryList" asp-for="subCategory.CategoryId" disabled asp-items="Model.Categories.ToSelectListItem(Model.subCategory.CategoryId)" class="form-control"></select>
+                    </div>
+                </div>
+                <br>
+                <div class="form-group row">
+                    <div class="col-3">
+                        <label asp-for="subCategory.Name" class="col-form-label"></label>
+                    </div>
+                    <div class="col-5">
+                        <input asp-for="subCategory.Name" class="form-control" />
+                    </div>
+                    <span asp-validation-for="subCategory.Name" class="text-danger"></span>
+                </div>
+                <br>
+                <div class="form-group row">
+                    <div class="col-5 offset-3">
+                        <partial name="_EditAndBackToPagePartialView" model="Model.subCategory.Id" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-4">
+            @if (Model.Categories.Count() > 0)
+            {
+                <div class="text-right">
+                    <p>Existing Sub Categories</p>
+                </div>
+                <div id="SubCategoryList">
+                    <ul class="list-group">
+                        <!-- Populate the list of existing subcategories here -->
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function updateSubCategoryList() {
+            var categorySelected = $("#ddlCategoryList").val();
+            var $list = $("#SubCategoryList");
+
+            $.ajax({
+                url: '/Admin/SubCategory/GetSubCategory/' + categorySelected,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    $list.html('');
+                    $list.append('<ul class="list-group">');
+                    for (var i = 0; i < data.length; i++) {
+                        $list.append('<li class="list-group-item">' + data[i].text + '</li>');
+                    }
+                    $list.append('</ul>');
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            updateSubCategoryList();
+        });
+
+        
+    </script>
+}

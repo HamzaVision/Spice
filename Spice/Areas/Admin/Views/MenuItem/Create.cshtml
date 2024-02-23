@@ -1,0 +1,131 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+}
+@model Spice.Models.ViewModels.MenuItemViewModel
+@using Spice.Extensions
+<br>
+<h2 class='text-info'>Create Menu Item</h2>
+<br>
+<form method="post" asp-action="Create">
+    <div class="whitebackgroundBorder border">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="MenuItem.Name" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <input asp-for="MenuItem.Name" class="form-control" />
+            </div>
+            <span asp-validation-for="MenuItem.Name" class="text-danger"></span>
+        </div>
+        <br>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="MenuItem.description" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                @Html.TextAreaFor(m => m.MenuItem.description)
+            </div>
+            <span asp-validation-for="MenuItem.description" class="text-danger"></span>
+         </div>
+        <br>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="MenuItem.Price" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <input asp-for="MenuItem.Price" class="form-control" />
+            </div>
+            <span asp-validation-for="MenuItem.Price" class="text-danger"></span>
+        </div>
+        <br>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="MenuItem.Image" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <input type="file" name="files" multiple class="form-control"/>
+            </div>
+        </div>
+        <br>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="MenuItem.CategoryId" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <select id="CategoryList" asp-for="MenuItem.CategoryId" asp-items="Model.CategoryList.ToSelectListItem(Model.MenuItem.CategoryId)" class="form-control"></select>
+            </div>
+            <span asp-validation-for="MenuItem.CategoryId" class="text-danger"></span>
+        </div>
+        <br>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="MenuItem.SubCategoryId" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <select id="SubCategoryList" asp-for="MenuItem.SubCategoryId" name="SubCategoryList" asp-items="@(new SelectList(string.Empty,"Id"))" class="form-control"></select>
+            </div>
+            <span asp-validation-for="MenuItem.SubCategoryId" class="text-danger"></span>
+        </div>
+        <br>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="MenuItem.spicyness" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <select asp-for="MenuItem.spicyness" asp-items="Html.GetEnumSelectList<MenuItem.Espicy>()" class="form-control"></select>
+            </div>
+        </div>
+        <br/>
+        <div class="form-group row">
+            <div class="col-5 offset-2">
+                <partial name="_CreateAndBackToPageButton" />
+            </div>
+        </div>
+    </div>
+</form>
+@section Scripts{
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'lists',
+            menubar: 'file edit format'
+        });
+    </script>
+
+    <script type="text/javascript">
+        function updateSubCategoryList() {
+            var categorySelected = $("#CategoryList").val();
+            var $list = $("#SubCategoryList");
+
+            $.ajax({
+                url: '/Admin/SubCategory/GetSubCategory/' + categorySelected,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    var items = '';
+                    $('#SubCategoryList').empty();
+                    $.each(data, function (i, subcategory) {
+                        items += "<option value='" + subcategory.value + "'>" + subcategory.text + "</option>";
+                    });
+                    $('#SubCategoryList').html(items);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            updateSubCategoryList();
+        });
+
+        $('#CategoryList').on("change", function () {
+            updateSubCategoryList();
+        });
+    </script>
+
+
+
+}
+

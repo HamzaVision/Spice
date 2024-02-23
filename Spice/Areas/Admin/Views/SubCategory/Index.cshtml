@@ -1,0 +1,42 @@
+﻿@model IEnumerable<SubCategory>
+
+
+<br>
+
+<div class="border whitebackgroundBorder">
+    <div class="row">
+        <div class="col-6 text-info"><h2>SubCategory</h2></div>
+        <div class="col-6 text-end"><partial name="_CreateButtonPartial" /> </div>
+    </div>
+    @if (Model.Count() > 0)
+    {
+        <table class="table table-striped border">
+            <thead>
+                <tr class="table-secondary">
+                    <th>@Html.DisplayNameFor(item => item.Name)</th>
+                    <th>@Html.DisplayNameFor(item => item.Category.Name)</th>
+                    <th colspan="2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Category.Name</td>
+                        <td><partial name="_EditDetailsDeletePartialView" model="item.Id" /></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <br />
+        <p>NO SUB CATEGORY EXISTS</p>
+    }
+
+
+
+
+</div>

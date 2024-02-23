@@ -1,0 +1,118 @@
+﻿@model Spice.Models.ViewModels.OrderDetailsCartViewModel
+@{
+	ViewData["Title"] = "Index";
+}
+
+<form method="post">
+	@if (Model.ListShoppingCarts.Count > 0)
+	{
+		<br />
+		<input type="hidden" asp-for="ListShoppingCarts[0].ApplicationUserId" />
+		<div class="whitebackgroundBorder">
+			<div class="container">
+				<div class="card">
+					<div class="card-header bg-dark text-light ml-0 row">
+						<div class="col-6">
+							<i class="fa fa-shopping-cart"></i>&nbsp;
+							Shopping Cart
+						</div>
+						<div class="col-6 justify-content-end">
+							<button asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn btn-outline-info btn-sm text-right">Continue Shopping</button>
+						</div>
+					</div>
+					<div class="card-body">
+						@foreach (var item in Model.ListShoppingCarts)
+						{
+							<div class="row">
+								<div class="d-none d-lg-block col-lg-2 text-center py-2">
+									<img src="@item.MenuItem.Image" class="rounded" width="120" height="80" />
+								</div>
+								<div class="col-12 text-sm-center col-lg-5 text-lg-left">
+									<h4><strong>@item.MenuItem.Name</strong></h4>
+									<h5><small>@item.MenuItem.description</small></h5>
+								</div>
+								<div class="col-12 text-sm-center col-lg-5 text-lg-right">
+									<div class="row">
+										<div class="col-4 text-md-right" style="padding-top: 5px">
+											<h6><strong>@item.MenuItem.Price<span class="text-muted">x</span>@item.count</strong></h6>
+										</div>
+										<div class="col-6 col-sm-4 col-lg-6 row">
+											<div class="float-right mx-1">
+												<button type="submit" class="btn btn-primary" asp-action="Plus" asp-route-cartId="@item.Id">
+													<i class="fas fa-plus"></i>
+												</button>
+											</div>
+											<div class="float-right mx-1">
+												<button type="submit" class="btn btn-danger" asp-action="Minus" asp-route-cartId="@item.Id">
+													<i class="fas fa-minus"></i>
+												</button>
+											</div>
+										</div>
+										<div class="col-2 col-sm-4 col-lg-2 text-right">
+											<button type="submit" class="btn btn-outline-danger" asp-action="Delete" asp-route-cartId="@item.Id">
+												<i class="fas fa-trash"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						}
+						<div class="row">
+							<div class="col-12 col-md-5">
+								<div class="row">
+									<div class="col-7">
+										<input asp-for="@Model.OrderHeader.CouponCode" id="txtCouponCode" class="form-control" placeholder="Coupon Code...." />
+									</div>
+									<div class="col-5" style="margin-top:2px;">
+
+										<button type="submit" class="btn btn-sm form-control btn-outline-success" id="AddCoupon" asp-action="AddCoup">Apply Coupon</button>
+										<button type="submit" class="btn btn-sm form-control btn-outline-danger" id="RemoveCoupon" asp-action="RemoveCoup" style="display:none">Remove Coupon</button>
+
+									</div>
+
+								</div>
+							</div>
+							<div class="col-12 col-md-6 offset-md-1 col-lg-4 offset-lg-3 pr-4">
+								<ul class="list-group">
+									<li class="list-group-item justify-content-between bg-light">
+										<span class="text-info">Total (PKR)</span>
+										<strong class="text-info"><span id="txtOrderTotal">@Model.OrderHeader.FinalTotal</span></strong>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="card-footer">
+						<div class="col-12 col-lg-4 offset-lg-8 col-md-6 offset-md-6">
+							<a asp-area="Customer" asp-controller="Cart" asp-action="Summary" class="btn btn-success form-control">Summary</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+	else
+	{
+		<div class="whitebackgroundBorder">No Items to Display in this Context....</div>
+	}
+</form>
+
+@section scripts
+{
+	<script>
+		$(function (){
+			var coupcode = document.getElementById("txtCouponCode").value;
+
+			if(coupcode.length > 0)
+			{
+				document.getElementById("AddCoupon").style.display = "none";
+				document.getElementById("RemoveCoupon").style.display = "";
+			}
+			else
+			{
+				document.getElementById("AddCoupon").style.display = "";
+				document.getElementById("RemoveCoupon").style.display = "none";
+			}
+		});
+	</script>
+}

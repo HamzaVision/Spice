@@ -1,0 +1,81 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+}
+@model Spice.Models.Coupon
+<br>
+<h2 class='text-info'>Create Coupon</h2>
+<br>
+<form method="post" enctype="multipart/form-data">
+    <div class="whitebackgroundBorder border">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="Name" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <input asp-for="Name" class="form-control" />
+            </div>
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <br>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="Picture" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <input type="file" id="PictureId" name="PictureId" multiple class="form-control" />
+            </div>
+        </div>
+        <br>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="CouponType" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <select asp-for="CouponType" asp-items="Html.GetEnumSelectList<Coupon.ECouponType>()" class="form-control"></select>
+            </div>
+            <span asp-validation-for="CouponType" class="text-danger"></span>
+        </div>
+        <br>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="discount" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <input asp-for="discount" class="form-control" />
+            </div>
+            <span asp-validation-for="discount" class="text-danger"></span>
+        </div>
+        <br>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="MinimumAmount" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <input asp-for="MinimumAmount" class="form-control" />
+            </div>
+            <span asp-validation-for="MinimumAmount" class="text-danger"></span>
+        </div>
+        <br>
+        <div class="form-group row">
+            <div class="col-2">
+                <label asp-for="IsActive" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <div class="form-check ">
+                    <input class="form-check-input" type="checkbox" asp-for="IsActive" style="width: 20px; height: 20px;" />
+                </div>
+            </div>
+            <span asp-validation-for="IsActive" class="text-danger"></span>
+        </div>
+        <br>
+        <div class="form-group-row">
+            <div class="col-5 offset-2">
+                <partial name="_CreateAndBackToPageButton" />
+            </div>
+        </div>
+    </div>
+</form>

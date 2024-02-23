@@ -1,0 +1,144 @@
+﻿@model Spice.Models.ViewModels.OrderDetailsAndPagingViewModel
+
+@using Spice.Constant_Utility 
+<br>
+
+
+
+<div class="border whitebackgroundBorder">
+	<div class="row">
+		<div class="col-6 text-info"><h2>Order History</h2></div>
+		<div class="col-6 text-end"><partial name="_CreateButtonPartial" /> </div>
+	</div>
+	@if (Model.OrderDetailsList.Count() > 0)
+	{
+		<table class="table table-striped border">
+			<thead>
+				<tr class="table-secondary">
+					<th>@Html.DisplayNameFor(item => item.OrderDetailsList[0].OrderHeader.Id)</th>
+					<th>@Html.DisplayNameFor(item => item.OrderDetailsList[0].OrderHeader.PickUpName)</th>
+					<th>@Html.DisplayNameFor(item => item.OrderDetailsList[0].OrderHeader.PickUpTime)</th>
+					<th>@Html.DisplayNameFor(item => item.OrderDetailsList[0].OrderHeader.FinalTotal)</th>
+					<th>@Html.DisplayNameFor(item => item.OrderDetailsList[0].OrderDetails.Count)</th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.OrderDetailsList)
+				{
+					<tr>
+						<td>@item.OrderHeader.Id</td>
+						<td>@item.OrderHeader.PickUpName</td>
+						<td>@item.OrderHeader.PickUpTime</td>
+						<td>@item.OrderHeader.FinalTotal</td>
+						<td>@item.OrderDetails.Count</td>
+						<td>
+							<button type="submit" class="btn btn-success anchorDetail" data-id="@item.OrderHeader.Id">
+								<i class="far fa-list-alt" data-toggle="modal"></i> Details
+							</button>
+						</td>
+						@if (item.OrderHeader.Status != SD.statusCancelled)
+						{
+							<td>
+								<button type="submit" class="btn btn-info text-white anchorDetail" data-status-id="@item.OrderHeader.Id">
+									<i class="fa-regular fa-clock" data-toggle="modal"></i> Status
+								</button>
+							</td>
+						}
+
+					</tr>
+				}
+			</tbody>
+		</table>
+		<div page-model="@Model.pagingObj" page-class-enabled="true" page-class="btn border"page-normal="btn btn-light" 
+						page-selected="btn btn-info" class="btn-group float-right">
+
+		</div>
+
+	}
+	else
+	{
+		<br />
+		<p>NO ORDER HISTORY EXISTS</p>
+	}
+
+</div>
+
+<div class="modal fade" id="MyModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog-centered modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header bg-dark text-light justify-content-center">
+				<h5 class="modal-title">Order Details</h5>
+			</div>
+			<div class="modal-body justify-content-center" id="MyModalContent">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" style="width:20%" data-dismiss="modal" data-bs-dismiss="#MyModal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Modal For Status--> 
+<div class="modal fade" id="StatusModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog-centered modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-light justify-content-center">
+        <h5 class="modal-title">Order Status</h5>
+      </div>
+      <div class="modal-body justify-content-center" id="StatusModalContent">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" style="width:20%" data-dismiss="modal" data-bs-dismiss="#StatusModal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section scripts {
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-Ky0kt+grVhx3fdY/uj4EvCCmQF0/k3ZJT4F2rn6XzTAHqlRsTnhXjRx0o8xx0tnh" crossorigin="anonymous"></script>
+	<script>
+		$(function () {
+			var positionbackURL = '/Customer/Order/GetOrderDetails';
+
+			// Event handler for the Details button click
+			$('.anchorDetail[data-id]').on('click', function () {
+				var id = $(this).data('id');
+
+				$.ajax({
+					type: "GET",
+					url: positionbackURL,
+					contentType: "application/json; charset=utf-8",
+					data: { id: id },
+					cache: false,
+					dataType: 'html',
+					success: function (data) {
+						$('#MyModalContent').html(data);
+						$('#MyModal').modal('show');
+					},
+					error: function () {
+						alert("Dynamic content load failed.");
+					}
+				});
+			});
+
+			// Event handler for the Status button click
+			$('.anchorDetail[data-status-id]').on('click', function () {
+				var orderId = $(this).data('status-id');
+
+				$.ajax({
+					url: '/Customer/Order/GetOrderStatus',
+					type: 'GET',
+					data: { id: orderId },
+					success: function (partialView) {
+						$('#StatusModalContent').html(partialView);
+						$('#StatusModal').modal('show');
+					},
+					error: function () {
+						alert("Dynamic content load failed.");
+					}
+				});
+			});
+		});
+	</script>
+}
